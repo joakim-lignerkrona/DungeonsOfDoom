@@ -22,9 +22,17 @@ namespace DungeonsOfDoom {
         }
 
         private void CheckForItem() {
-            if(world[player.X, player.Y].ItemInRoom != null) {
-                player.Inventory.Add(world[player.X, player.Y].ItemInRoom);
-                world[player.X, player.Y].ItemInRoom = null;
+            var currenRoom = world[player.X, player.Y];
+            if(currenRoom.ItemInRoom != null) {
+                player.Inventory.Add(currenRoom.ItemInRoom);
+                currenRoom.ItemInRoom = null;
+            }
+            else if(currenRoom.MonsterInRoom != null && currenRoom.MonsterInRoom.Inventory.Count > 0) {
+                for(int i = currenRoom.MonsterInRoom.Inventory.Count - 1; i >= 0; i--) {
+                    player.Inventory.Add(currenRoom.MonsterInRoom.Inventory[i]);
+                    currenRoom.MonsterInRoom.Inventory.Remove(currenRoom.MonsterInRoom.Inventory[i]);
+
+                }
             }
         }
 
@@ -41,8 +49,15 @@ namespace DungeonsOfDoom {
                     int percentage = Random.Shared.Next(1, 100);
                     if(percentage < 10)
                         world[x, y].MonsterInRoom = new Monster("Skeleton", 30);
-                    else if(percentage < 20)
+                    percentage = Random.Shared.Next(1, 100);
+                    if(percentage < 10) {
                         world[x, y].ItemInRoom = new Item("Sword");
+                        if(world[x, y].MonsterInRoom != null) {
+                            world[x, y].ItemInRoom.Name = "Monster Sword";
+                            world[x, y].MonsterInRoom.Inventory.Add(world[x, y].ItemInRoom);
+                            world[x, y].ItemInRoom = null;
+                        }
+                    }
                 }
             }
         }
