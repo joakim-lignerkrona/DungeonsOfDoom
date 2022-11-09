@@ -76,6 +76,32 @@ namespace DungeonsOfDoom
             }
         }
 
+        private void DisplayFancyWorld()
+        {
+            var table = new Table();
+            table.Border(TableBorder.Horizontal);
+            for(int x = 0; x < world.GetLength(0); x++)
+                table.AddColumn(" ");
+
+            for(int y = 0; y < world.GetLength(1); y++)
+            {
+                string[] rowToPrint = new string[world.GetLength(0)];
+                for(int x = 0; x < world.GetLength(0); x++)
+                {
+                    Room room = world[x, y];
+                    if(player.X == x && player.Y == y)
+                        rowToPrint[x] = "P";
+                    else if(room.MonsterInRoom != null)
+                        rowToPrint[x] = "M";
+                    else if(room.ItemInRoom != null)
+                        rowToPrint[x] = "I";
+                    else
+                        rowToPrint[x] = ".";
+                }
+                table.AddRow(rowToPrint);
+            }
+            AnsiConsole.Write(table);
+        }
         private void DisplayWorld()
         {
             for(int y = 0; y < world.GetLength(1); y++)

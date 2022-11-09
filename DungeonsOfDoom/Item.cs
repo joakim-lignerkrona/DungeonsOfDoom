@@ -13,14 +13,7 @@
         public static Item GetRandom()
         {
             int rand = Random.Shared.Next(1, 100);
-            if(rand < 70)
-            {
-                return new RawMeat();
-            }
-            else
-            {
-                return new Sword();
-            }
+            return rand < 70 ? new RawMeat() : new Sword();
         }
     }
 
