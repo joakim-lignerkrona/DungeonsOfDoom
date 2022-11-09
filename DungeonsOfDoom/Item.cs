@@ -6,9 +6,9 @@
         {
             Name = name;
         }
-
-
         public string Name { get; set; }
+
+        public abstract (ItemEffect, double) GetItemEffect();
 
         public static Item GetRandom()
         {
@@ -21,8 +21,13 @@
     {
         public Sword() : base("Sword")
         {
-
         }
+
+        public override (ItemEffect, double) GetItemEffect()
+        {
+            return (ItemEffect.AttackRelative, 1.8);
+        }
+
     }
 
     class RawMeat : Item
@@ -31,5 +36,16 @@
         {
 
         }
+        public override (ItemEffect, double) GetItemEffect()
+        {
+            return (ItemEffect.HealthAbsolute, 10);
+        }
+    }
+    enum ItemEffect
+    {
+        AttackAbsolute,
+        AttackRelative,
+        HealthAbsolute,
+        HealthRelative
     }
 }

@@ -20,13 +20,16 @@ namespace DungeonsOfDoom
                 DisplayWorld();
                 DisplayStats();
                 AskForMovement();
-                CheckForItem();
+
+                EnterRoom();
             } while(player.IsAlive);
 
             GameOver();
         }
 
-        private void CheckForItem()
+
+
+        private void EnterRoom()
         {
             var currenRoom = world[player.X, player.Y];
             if(currenRoom.ItemInRoom != null)
@@ -34,7 +37,35 @@ namespace DungeonsOfDoom
                 player.Inventory.Add(currenRoom.ItemInRoom);
                 currenRoom.ItemInRoom = null;
             }
-            else if(currenRoom.MonsterInRoom != null && currenRoom.MonsterInRoom.Inventory.Count > 0)
+            else if(currenRoom.MonsterInRoom != null)
+            {
+                FightMonster(player, currenRoom.MonsterInRoom);
+
+                CollectReward(currenRoom);
+            }
+        }
+
+        private void FightMonster(Player player, Monster monsterInRoom)
+        {
+            int turn = 0;
+            while(player.IsAlive && monsterInRoom.IsAlive)
+            {
+                if(turn % 2 == 0)
+                {
+                    player.Attack(monsterInRoom);
+
+                }
+                else
+                {
+                    monsterInRoom.Attack(player);
+                }
+                turn++;
+            }
+        }
+
+        private void CollectReward(Room currenRoom)
+        {
+            if(currenRoom.MonsterInRoom.Inventory.Count > 0)
             {
                 for(int i = currenRoom.MonsterInRoom.Inventory.Count - 1; i >= 0; i--)
                 {
@@ -47,7 +78,7 @@ namespace DungeonsOfDoom
 
         private void CreatePlayer()
         {
-            player = new Player(30, 0, 0);
+            player = new Player(100, 0, 0);
         }
 
         private void CreateWorld()
