@@ -40,8 +40,8 @@ namespace DungeonsOfDoom
             else if(currenRoom.MonsterInRoom != null)
             {
                 FightMonster(player, currenRoom.MonsterInRoom);
-
                 CollectReward(currenRoom);
+                currenRoom.MonsterInRoom = null;
             }
         }
 
@@ -177,6 +177,9 @@ namespace DungeonsOfDoom
             ConsoleKeyInfo keyInfo = Console.ReadKey();
             switch(keyInfo.Key)
             {
+                case ConsoleKey.I:
+                    SelectItem();
+                    break;
                 case ConsoleKey.RightArrow:
                     newX++;
                     break;
@@ -201,6 +204,22 @@ namespace DungeonsOfDoom
                 player.X = newX;
                 player.Y = newY;
             }
+        }
+
+        private void SelectItem()
+        {
+            if(player.Inventory.Count <= 0)
+                return;
+            var items = new List<string>();
+            player.Inventory.ForEach(item => items.Add(item.Name));
+            var selection = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                    .Title("Whitch item do you want to use?")
+                    .PageSize(4)
+                    .MoreChoicesText("[grey](Move up and down to reveal more choices)[/]")
+                    .AddChoices(items));
+            var itemToConsume = player.Inventory.Find(item => item.Name == selection);
+            player.UseItem(itemToConsume);
+            player.Inventory.Remove(itemToConsume);
         }
 
         private void GameOver()

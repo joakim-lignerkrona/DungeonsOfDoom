@@ -28,7 +28,16 @@
                 });
                 return (int)Math.Round(baseDamage * multiplier) + bonusDamage;
             }
-
+        }
+        public void UseItem(Item item)
+        {
+            var (effect, value) = item.GetItemEffect();
+            int bonusDamage = 0;
+            if(effect == ItemEffect.HealthAbsolute)
+            {
+                bonusDamage += (int)Math.Round(value);
+            }
+            Health += bonusDamage;
         }
         public int X { get; set; }
         public int Y { get; set; }
