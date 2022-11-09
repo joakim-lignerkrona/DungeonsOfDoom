@@ -1,13 +1,38 @@
 ﻿namespace DungeonsOfDoom {
-    class Monster {
-        public Monster(string name, int health) {
+    abstract class Monster : Character {
+        public Monster(string name, int health) : base(health) {
             Name = name;
-            Health = health;
         }
 
         public string Name { get; set; }
-        public int Health { get; set; }
-        public bool IsAlive { get { return Health > 0; } }
-        public List<Item> Inventory { get; } = new List<Item>();
+        public static Monster GetRandom() {
+            int rand = Random.Shared.Next(1, 100);
+            if(rand < 70) {
+                return new Skeleton();
+            }
+            else if(rand < 90) {
+                return new Orc();
+            }
+            else {
+                return new Dragon();
+            }
+        }
+    }
+
+    class Dragon : Monster {
+        public Dragon() : base("Dragon", 150) {
+
+        }
+    }
+
+    class Orc : Monster {
+        public Orc() : base("Orc", 60) {
+
+        }
+    }
+    class Skeleton : Monster {
+        public Skeleton() : base("Skeleton", 30) {
+
+        }
     }
 }

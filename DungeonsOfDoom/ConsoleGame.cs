@@ -1,16 +1,21 @@
 ﻿using System;
+using Spectre.Console;
 
-namespace DungeonsOfDoom {
-    class ConsoleGame {
+namespace DungeonsOfDoom
+{
+    class ConsoleGame
+    {
         Room[,] world;
         Player player;
 
-        public void Play() {
+        public void Play()
+        {
             Console.CursorVisible = false;
             CreatePlayer();
             CreateWorld();
 
-            do {
+            do
+            {
                 Console.Clear();
                 DisplayWorld();
                 DisplayStats();
@@ -21,14 +26,18 @@ namespace DungeonsOfDoom {
             GameOver();
         }
 
-        private void CheckForItem() {
+        private void CheckForItem()
+        {
             var currenRoom = world[player.X, player.Y];
-            if(currenRoom.ItemInRoom != null) {
+            if(currenRoom.ItemInRoom != null)
+            {
                 player.Inventory.Add(currenRoom.ItemInRoom);
                 currenRoom.ItemInRoom = null;
             }
-            else if(currenRoom.MonsterInRoom != null && currenRoom.MonsterInRoom.Inventory.Count > 0) {
-                for(int i = currenRoom.MonsterInRoom.Inventory.Count - 1; i >= 0; i--) {
+            else if(currenRoom.MonsterInRoom != null && currenRoom.MonsterInRoom.Inventory.Count > 0)
+            {
+                for(int i = currenRoom.MonsterInRoom.Inventory.Count - 1; i >= 0; i--)
+                {
                     player.Inventory.Add(currenRoom.MonsterInRoom.Inventory[i]);
                     currenRoom.MonsterInRoom.Inventory.Remove(currenRoom.MonsterInRoom.Inventory[i]);
 
@@ -36,24 +45,29 @@ namespace DungeonsOfDoom {
             }
         }
 
-        private void CreatePlayer() {
+        private void CreatePlayer()
+        {
             player = new Player(30, 0, 0);
         }
 
-        private void CreateWorld() {
+        private void CreateWorld()
+        {
             world = new Room[20, 5];
-            for(int y = 0; y < world.GetLength(1); y++) {
-                for(int x = 0; x < world.GetLength(0); x++) {
+            for(int y = 0; y < world.GetLength(1); y++)
+            {
+                for(int x = 0; x < world.GetLength(0); x++)
+                {
                     world[x, y] = new Room();
 
                     int percentage = Random.Shared.Next(1, 100);
                     if(percentage < 10)
-                        world[x, y].MonsterInRoom = new Monster("Skeleton", 30);
+                        world[x, y].MonsterInRoom = Monster.GetRandom();
                     percentage = Random.Shared.Next(1, 100);
-                    if(percentage < 10) {
-                        world[x, y].ItemInRoom = new Item("Sword");
-                        if(world[x, y].MonsterInRoom != null) {
-                            world[x, y].ItemInRoom.Name = "Monster Sword";
+                    if(percentage < 10)
+                    {
+                        world[x, y].ItemInRoom = Item.GetRandom();
+                        if(world[x, y].MonsterInRoom != null)
+                        {
                             world[x, y].MonsterInRoom.Inventory.Add(world[x, y].ItemInRoom);
                             world[x, y].ItemInRoom = null;
                         }
@@ -62,9 +76,12 @@ namespace DungeonsOfDoom {
             }
         }
 
-        private void DisplayWorld() {
-            for(int y = 0; y < world.GetLength(1); y++) {
-                for(int x = 0; x < world.GetLength(0); x++) {
+        private void DisplayWorld()
+        {
+            for(int y = 0; y < world.GetLength(1); y++)
+            {
+                for(int x = 0; x < world.GetLength(0); x++)
+                {
                     Room room = world[x, y];
                     if(player.X == x && player.Y == y)
                         Console.Write("P");
@@ -79,25 +96,30 @@ namespace DungeonsOfDoom {
             }
         }
 
-        private void DisplayStats() {
+        private void DisplayStats()
+        {
             Console.WriteLine($"Health: {player.Health}");
             Console.WriteLine($"Inventory:");
             DisplayInventory();
         }
 
-        private void DisplayInventory() {
-            foreach(var item in player.Inventory) {
+        private void DisplayInventory()
+        {
+            foreach(var item in player.Inventory)
+            {
                 Console.WriteLine($"\t{item.Name}");
             }
         }
 
-        private void AskForMovement() {
+        private void AskForMovement()
+        {
             int newX = player.X;
             int newY = player.Y;
             bool isValidKey = true;
 
             ConsoleKeyInfo keyInfo = Console.ReadKey();
-            switch(keyInfo.Key) {
+            switch(keyInfo.Key)
+            {
                 case ConsoleKey.RightArrow:
                     newX++;
                     break;
@@ -117,13 +139,15 @@ namespace DungeonsOfDoom {
 
             if(isValidKey &&
                 newX >= 0 && newX < world.GetLength(0) &&
-                newY >= 0 && newY < world.GetLength(1)) {
+                newY >= 0 && newY < world.GetLength(1))
+            {
                 player.X = newX;
                 player.Y = newY;
             }
         }
 
-        private void GameOver() {
+        private void GameOver()
+        {
             Console.Clear();
             Console.WriteLine("Game over...");
             Console.ReadKey();
