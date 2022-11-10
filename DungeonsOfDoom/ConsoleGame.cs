@@ -7,6 +7,7 @@ namespace DungeonsOfDoom
     {
         Room[,] world;
         Player player;
+        int monsterCount = 0;
 
         public void Play()
         {
@@ -17,12 +18,12 @@ namespace DungeonsOfDoom
             do
             {
                 Console.Clear();
-                DisplayWorld();
+                DisplayFancyWorld();
                 DisplayStats();
                 AskForMovement();
 
                 EnterRoom();
-            } while(player.IsAlive);
+            } while(player.IsAlive && monsterCount > 0);
 
             GameOver();
         }
@@ -61,6 +62,7 @@ namespace DungeonsOfDoom
                 }
                 turn++;
             }
+            monsterCount--;
         }
 
         private void CollectReward(Room currenRoom)
@@ -92,7 +94,10 @@ namespace DungeonsOfDoom
 
                     int percentage = Random.Shared.Next(1, 100);
                     if(percentage < 10)
+                    {
                         world[x, y].MonsterInRoom = Monster.GetRandom();
+                        monsterCount++;
+                    }
                     percentage = Random.Shared.Next(1, 100);
                     if(percentage < 10)
                     {
@@ -225,8 +230,25 @@ namespace DungeonsOfDoom
         private void GameOver()
         {
             Console.Clear();
-            Console.WriteLine("Game over...");
-            Console.ReadKey();
+            if(player.IsAlive)
+            {
+                AnsiConsole.Write(new FigletText("Yay! You won!")
+                .Centered()
+                .Color(Color.Gold3));
+            }
+            else
+            {
+                AnsiConsole.Write(new FigletText("Game Over")
+                .Centered()
+                .Color(Color.Red));
+            }
+
+            var selection = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                    .Title("Whitch item do you want to use?")
+                    .PageSize(4)
+                    .MoreChoicesText("[grey](Do you want to play again?)[/]")
+                    .AddChoices("[green]Yes[/]", "[red]No[/]"));
+
             Play();
         }
     }
