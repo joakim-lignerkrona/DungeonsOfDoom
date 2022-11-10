@@ -2,15 +2,22 @@
 {
     abstract class Monster : Character
     {
-        public Monster(string name, int health) : base(health)
+        public static int MonstersInWorld { get; set; } = 0;
+        public static int MonsterDefeated { get; set; } = 0;
+        public static int Count
         {
-            Name = name;
+            get
+            {
+                return MonstersInWorld - MonsterDefeated;
+
+            }
+
         }
 
-        public string Name { get; set; }
         public static Monster GetRandom()
         {
             int rand = Random.Shared.Next(1, 100);
+            MonstersInWorld++;
             if(rand < 70)
             {
                 return new Skeleton();
@@ -24,6 +31,13 @@
                 return new Dragon();
             }
         }
+
+        public Monster(string name, int health) : base(health)
+        {
+            Name = name;
+        }
+
+        public string Name { get; set; }
     }
 
     class Dragon : Monster

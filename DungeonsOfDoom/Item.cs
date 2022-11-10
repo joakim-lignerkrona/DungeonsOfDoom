@@ -43,16 +43,37 @@
         }
 
     }
+    class CookedMeat : Consumable
+    {
+        public CookedMeat() : base("Cooked Meat")
+        {
 
+        }
+        public override (ItemEffect, double) GetItemEffect()
+        {
+            return (ItemEffect.HealthAbsolute, 20);
+        }
+    }
     class RawMeat : Consumable
     {
-        public RawMeat() : base("RawMeat")
+        public RawMeat() : base("Raw Meat")
         {
 
         }
         public override (ItemEffect, double) GetItemEffect()
         {
             return (ItemEffect.HealthAbsolute, 10);
+        }
+    }
+    class BareBone : Consumable
+    {
+        public BareBone() : base("Bare Bone")
+        {
+
+        }
+        public override (ItemEffect, double) GetItemEffect()
+        {
+            return (ItemEffect.HealthAbsolute, 5);
         }
     }
     enum ItemEffect

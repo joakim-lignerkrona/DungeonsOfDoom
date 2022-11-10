@@ -6,8 +6,6 @@ namespace DungeonsOfDoom
     {
         Room[,] world;
         Player player;
-        int monsterCount;
-        int monsterDefeated;
 
         public void Play()
         {
@@ -24,7 +22,7 @@ namespace DungeonsOfDoom
                 DisplayStats();
                 DisplayInventory();
                 AskForMovement();
-            } while(player.IsAlive && monsterCount != monsterDefeated);
+            } while(player.IsAlive && Monster.Count != 0);
 
             GameOver();
         }
@@ -64,7 +62,7 @@ namespace DungeonsOfDoom
                 }
                 turn++;
             }
-            monsterDefeated++;
+            Monster.MonsterDefeated++;
 
         }
 
@@ -89,8 +87,8 @@ namespace DungeonsOfDoom
         private void CreateWorld()
         {
             world = new Room[20, 10];
-            monsterCount = 0;
-            monsterDefeated = 0;
+            Monster.MonstersInWorld = 0;
+            Monster.MonsterDefeated = 0;
             for(int y = 0; y < world.GetLength(1); y++)
             {
                 for(int x = 0; x < world.GetLength(0); x++)
@@ -101,7 +99,7 @@ namespace DungeonsOfDoom
                     if(percentage < 10)
                     {
                         world[x, y].MonsterInRoom = Monster.GetRandom();
-                        monsterCount++;
+
                     }
                     percentage = Random.Shared.Next(1, 100);
                     if(percentage < 10)
@@ -166,20 +164,22 @@ namespace DungeonsOfDoom
         private void DisplayStats()
         {
             //Console.WriteLine($"Health: {player.Health}");
+            Console.WriteLine();
             AnsiConsole.Write(new BreakdownChart()
                 .Width(80)
                 .AddItem("Health", player.Health, Color.Red)
                 .AddItem(" ", player.MaxHealth - player.Health, Color.Grey));
+            Console.WriteLine();
             AnsiConsole.Write(new BreakdownChart()
                 .Width(80)
-                .AddItem("Progress", Math.Round(100 * ((double)monsterDefeated / monsterCount), 2), Color.Green)
-                .AddItem(" ", Math.Round(100 * (double)(1 - (double)monsterDefeated / monsterCount), 2), Color.Grey));
-            AnsiConsole.Write(new Rule("[red]Inventory[/]").LeftAligned());
-
+                .AddItem("Progress", Monster.MonsterDefeated, Color.Green)
+                .AddItem(" ", Monster.Count, Color.Grey));
         }
 
         private void DisplayInventory()
         {
+            Console.WriteLine();
+            AnsiConsole.Write(new Rule("[red]Inventory[/]").LeftAligned());
             foreach(var item in player.Inventory)
             {
                 Console.WriteLine($"\t{item.Name}");
@@ -258,7 +258,7 @@ namespace DungeonsOfDoom
             }
             else
             {
-                AnsiConsole.Write(new FigletText("Game Over")
+                AnsiConsole.Write(new FigletText("You died, N00b!")
                 .Centered()
                 .Color(Color.Red));
             }
