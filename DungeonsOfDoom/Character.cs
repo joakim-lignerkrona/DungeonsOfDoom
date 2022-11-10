@@ -9,7 +9,7 @@
         }
         public int MaxHealth { get; set; }
         int health;
-        public int Health
+        public virtual int Health
         {
             get
             {

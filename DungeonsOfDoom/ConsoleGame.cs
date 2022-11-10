@@ -62,7 +62,6 @@ namespace DungeonsOfDoom
                 }
                 turn++;
             }
-            Monster.MonsterDefeated++;
 
         }
 
@@ -87,8 +86,7 @@ namespace DungeonsOfDoom
         private void CreateWorld()
         {
             world = new Room[20, 10];
-            Monster.MonstersInWorld = 0;
-            Monster.MonsterDefeated = 0;
+            Monster.ResetCount();
             for(int y = 0; y < world.GetLength(1); y++)
             {
                 for(int x = 0; x < world.GetLength(0); x++)

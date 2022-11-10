@@ -2,8 +2,8 @@
 {
     abstract class Monster : Character
     {
-        public static int MonstersInWorld { get; set; } = 0;
-        public static int MonsterDefeated { get; set; } = 0;
+        public static int MonstersInWorld { get; private set; } = 0;
+        public static int MonsterDefeated { get; private set; } = 0;
         public static int Count
         {
             get
@@ -17,7 +17,6 @@
         public static Monster GetRandom()
         {
             int rand = Random.Shared.Next(1, 100);
-            MonstersInWorld++;
             if(rand < 70)
             {
                 return new Skeleton();
@@ -32,9 +31,28 @@
             }
         }
 
+        internal static void ResetCount()
+        {
+            MonsterDefeated = 0;
+            MonstersInWorld = 0;
+        }
+
         public Monster(string name, int health) : base(health)
         {
             Name = name;
+            MonstersInWorld++;
+        }
+        public override int Health
+        {
+            get => base.Health;
+            set
+            {
+                base.Health = value;
+                if(value < 0)
+                {
+                    MonsterDefeated++;
+                }
+            }
         }
 
         public string Name { get; set; }
