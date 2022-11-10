@@ -31,7 +31,7 @@
 
         }
         public bool IsAlive { get { return Health > 0; } }
-        public List<Item> Inventory { get; } = new List<Item>();
+        public List<IPocketable> Inventory { get; } = new List<IPocketable>();
         public virtual int Attack(Character enemy)
         {
             enemy.Health -= Damage;

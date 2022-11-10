@@ -15,8 +15,8 @@ namespace DungeonsOfDoom
 
             do
             {
-                //Console.Clear();
-                Console.SetCursorPosition(0, 0);
+                Console.Clear();
+                //Console.SetCursorPosition(0, 0);
                 DisplayFancyWorld();
                 EnterRoom();
                 DisplayStats();
@@ -73,9 +73,9 @@ namespace DungeonsOfDoom
                 {
                     player.Inventory.Add(currenRoom.MonsterInRoom.Inventory[i]);
                     currenRoom.MonsterInRoom.Inventory.Remove(currenRoom.MonsterInRoom.Inventory[i]);
-
                 }
             }
+            player.Inventory.Add(currenRoom.MonsterInRoom);
         }
 
         private void CreatePlayer()

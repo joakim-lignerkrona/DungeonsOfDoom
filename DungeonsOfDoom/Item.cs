@@ -1,6 +1,6 @@
 ﻿namespace DungeonsOfDoom
 {
-    abstract class Item
+    abstract class Item : IPocketable
     {
         public Item(string name)
         {

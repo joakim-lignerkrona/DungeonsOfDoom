@@ -1,6 +1,6 @@
 ﻿namespace DungeonsOfDoom
 {
-    abstract class Monster : Character
+    abstract class Monster : Character, IPocketable
     {
         public static int MonstersInWorld { get; private set; } = 0;
         public static int MonsterDefeated { get; private set; } = 0;

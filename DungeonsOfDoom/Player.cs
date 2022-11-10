@@ -16,28 +16,37 @@
                 int bonusDamage = 0;
                 Inventory.ForEach(item =>
                 {
-                    var (effect, value) = item.GetItemEffect();
-                    if(effect == ItemEffect.AttackRelative)
+                    if(item is Item)
                     {
-                        multiplier *= value;
+                        var itemEffects = (Item)item;
+                        var (effect, value) = itemEffects.GetItemEffect();
+                        if(effect == ItemEffect.AttackRelative)
+                        {
+                            multiplier *= value;
+                        }
+                        else if(effect == ItemEffect.AttackAbsolute)
+                        {
+                            bonusDamage += (int)Math.Round(value);
+                        }
                     }
-                    else if(effect == ItemEffect.AttackAbsolute)
-                    {
-                        bonusDamage += (int)Math.Round(value);
-                    }
+
                 });
                 return (int)Math.Round(baseDamage * multiplier) + bonusDamage;
             }
         }
-        public void UseItem(Item item)
+        public void UseItem(IPocketable item)
         {
-            var (effect, value) = item.GetItemEffect();
-            int bonusDamage = 0;
-            if(effect == ItemEffect.HealthAbsolute)
+            if(item is Consumable)
             {
-                bonusDamage += (int)Math.Round(value);
+                var itemToUse = (Consumable)item;
+                var (effect, value) = itemToUse.GetItemEffect();
+                int bonusDamage = 0;
+                if(effect == ItemEffect.HealthAbsolute)
+                {
+                    bonusDamage += (int)Math.Round(value);
+                }
+                Health += bonusDamage;
             }
-            Health += bonusDamage;
         }
         public int X { get; set; }
         public int Y { get; set; }
