@@ -54,7 +54,7 @@
     }
     class Skeleton : Monster
     {
-        public Skeleton() : base("Skeleton", 10)
+        public Skeleton() : base("Skeleton", 20)
         {
 
         }

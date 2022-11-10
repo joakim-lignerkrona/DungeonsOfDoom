@@ -1,5 +1,4 @@
-﻿using System;
-using Spectre.Console;
+﻿using Spectre.Console;
 
 namespace DungeonsOfDoom
 {
@@ -7,7 +6,8 @@ namespace DungeonsOfDoom
     {
         Room[,] world;
         Player player;
-        int monsterCount = 0;
+        int monsterCount;
+        int monsterDefeated;
 
         public void Play()
         {
@@ -17,13 +17,14 @@ namespace DungeonsOfDoom
 
             do
             {
-                Console.Clear();
+                //Console.Clear();
+                Console.SetCursorPosition(0, 0);
                 DisplayFancyWorld();
-                DisplayStats();
-                AskForMovement();
-
                 EnterRoom();
-            } while(player.IsAlive && monsterCount > 0);
+                DisplayStats();
+                DisplayInventory();
+                AskForMovement();
+            } while(player.IsAlive && monsterCount != monsterDefeated);
 
             GameOver();
         }
@@ -51,18 +52,20 @@ namespace DungeonsOfDoom
             int turn = 0;
             while(player.IsAlive && monsterInRoom.IsAlive)
             {
+
                 if(turn % 2 == 0)
                 {
-                    player.Attack(monsterInRoom);
+                    int damage = player.Attack(monsterInRoom);
 
                 }
                 else
                 {
-                    monsterInRoom.Attack(player);
+                    int damage = monsterInRoom.Attack(player);
                 }
                 turn++;
             }
-            monsterCount--;
+            monsterDefeated++;
+
         }
 
         private void CollectReward(Room currenRoom)
@@ -85,7 +88,9 @@ namespace DungeonsOfDoom
 
         private void CreateWorld()
         {
-            world = new Room[20, 5];
+            world = new Room[20, 10];
+            monsterCount = 0;
+            monsterDefeated = 0;
             for(int y = 0; y < world.GetLength(1); y++)
             {
                 for(int x = 0; x < world.GetLength(0); x++)
@@ -126,13 +131,13 @@ namespace DungeonsOfDoom
                 {
                     Room room = world[x, y];
                     if(player.X == x && player.Y == y)
-                        rowToPrint[x] = "P";
+                        rowToPrint[x] = "[yellow1]P[/]";
                     else if(room.MonsterInRoom != null)
-                        rowToPrint[x] = "M";
+                        rowToPrint[x] = "[red]M[/]";
                     else if(room.ItemInRoom != null)
-                        rowToPrint[x] = "I";
+                        rowToPrint[x] = "[blue]I[/]";
                     else
-                        rowToPrint[x] = ".";
+                        rowToPrint[x] = "[gray].[/]";
                 }
                 table.AddRow(rowToPrint);
             }
@@ -160,9 +165,17 @@ namespace DungeonsOfDoom
 
         private void DisplayStats()
         {
-            Console.WriteLine($"Health: {player.Health}");
-            Console.WriteLine($"Inventory:");
-            DisplayInventory();
+            //Console.WriteLine($"Health: {player.Health}");
+            AnsiConsole.Write(new BreakdownChart()
+                .Width(80)
+                .AddItem("Health", player.Health, Color.Red)
+                .AddItem(" ", player.MaxHealth - player.Health, Color.Grey));
+            AnsiConsole.Write(new BreakdownChart()
+                .Width(80)
+                .AddItem("Progress", Math.Round(100 * ((double)monsterDefeated / monsterCount), 2), Color.Green)
+                .AddItem(" ", Math.Round(100 * (double)(1 - (double)monsterDefeated / monsterCount), 2), Color.Grey));
+            AnsiConsole.Write(new Rule("[red]Inventory[/]").LeftAligned());
+
         }
 
         private void DisplayInventory()
@@ -182,7 +195,7 @@ namespace DungeonsOfDoom
             ConsoleKeyInfo keyInfo = Console.ReadKey();
             switch(keyInfo.Key)
             {
-                case ConsoleKey.I:
+                case ConsoleKey.C:
                     SelectItem();
                     break;
                 case ConsoleKey.RightArrow:
@@ -213,18 +226,25 @@ namespace DungeonsOfDoom
 
         private void SelectItem()
         {
+            var items = new List<string>();
+            player.Inventory.ForEach(item =>
+            {
+                if(item is Consumable)
+                    items.Add(item.Name);
+            });
             if(player.Inventory.Count <= 0)
                 return;
-            var items = new List<string>();
-            player.Inventory.ForEach(item => items.Add(item.Name));
+            Console.Clear();
             var selection = AnsiConsole.Prompt(new SelectionPrompt<string>()
                     .Title("Whitch item do you want to use?")
-                    .PageSize(4)
+                    .PageSize(10)
                     .MoreChoicesText("[grey](Move up and down to reveal more choices)[/]")
                     .AddChoices(items));
             var itemToConsume = player.Inventory.Find(item => item.Name == selection);
             player.UseItem(itemToConsume);
             player.Inventory.Remove(itemToConsume);
+            Console.Clear();
+
         }
 
         private void GameOver()
@@ -244,12 +264,15 @@ namespace DungeonsOfDoom
             }
 
             var selection = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                    .Title("Whitch item do you want to use?")
+                    .Title("Do wou want to play again?")
                     .PageSize(4)
                     .MoreChoicesText("[grey](Do you want to play again?)[/]")
-                    .AddChoices("[green]Yes[/]", "[red]No[/]"));
-
-            Play();
+                    .AddChoices("Yes", "No"));
+            if(selection == "Yes")
+            {
+                Console.Clear();
+                Play();
+            }
         }
     }
 }

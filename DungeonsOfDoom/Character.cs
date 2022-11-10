@@ -1,18 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DungeonsOfDoom
+﻿namespace DungeonsOfDoom
 {
     abstract class Character
     {
         public Character(int health)
         {
+            MaxHealth = health;
             Health = health;
         }
-        public int Health { get; set; }
+        public int MaxHealth { get; set; }
+        int health;
+        public int Health
+        {
+            get
+            {
+                return health;
+            }
+            set
+            {
+                health = value > MaxHealth ? MaxHealth : value;
+            }
+        }
         protected int baseDamage = 10;
         public virtual int Damage
         {

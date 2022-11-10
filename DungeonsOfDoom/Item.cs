@@ -16,8 +16,22 @@
             return rand < 70 ? new RawMeat() : new Sword();
         }
     }
+    abstract class Consumable : Item
+    {
+        public Consumable(string name) : base(name)
+        {
 
-    class Sword : Item
+        }
+    }
+    abstract class Weapon : Item
+    {
+        public Weapon(string name) : base(name)
+        {
+
+        }
+    }
+
+    class Sword : Weapon
     {
         public Sword() : base("Sword")
         {
@@ -30,7 +44,7 @@
 
     }
 
-    class RawMeat : Item
+    class RawMeat : Consumable
     {
         public RawMeat() : base("RawMeat")
         {
