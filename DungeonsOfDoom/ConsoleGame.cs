@@ -15,8 +15,8 @@ namespace DungeonsOfDoom
 
             do
             {
-                Console.Clear();
-                //Console.SetCursorPosition(0, 0);
+                //Console.Clear();
+                Console.SetCursorPosition(0, 0);
                 DisplayFancyWorld();
                 EnterRoom();
                 DisplayStats();
